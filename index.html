@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Matrix Dancesport 2026</title>
+<style>
+:root{
+  --red:#C8102E;--red-dark:#8B0A1E;--red-light:#fdf0f2;
+  --gold:#D4AF37;--black:#1A1A1A;
+  --bg:#fff;--bg2:#f5f5f5;--border:rgba(0,0,0,0.12);
+  --text:#1a1a1a;--muted:#666;--green:#1a7a3c;--amber:#b87333;
+  --radius:10px;--sidebar-w:200px;--topbar-h:52px;--bottomnav-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);font-size:14px;background:#f0f0f0;}
+.shell{display:flex;flex-direction:column;height:100vh;max-width:1200px;margin:0 auto;background:var(--bg);}
+.topbar{height:var(--topbar-h);background:var(--red);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;}
+.topbar-logo{font-size:15px;font-weight:600;color:#fff;white-space:nowrap;}
+.topbar-divider{width:1px;height:22px;background:rgba(255,255,255,0.2);flex-shrink:0;}
+.ev-btn{padding:4px 10px;border-radius:14px;font-size:11px;cursor:pointer;border:1px solid rgba(255,255,255,0.35);color:rgba(255,255,255,0.8);background:transparent;transition:all 0.15s;white-space:nowrap;}
+.ev-btn.active{background:#fff;color:var(--red);border-color:#fff;font-weight:600;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.session-pill{background:var(--gold);color:var(--black);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.sync-row{display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,0.7);}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#2a9d4a;}
+.main-area{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:var(--sidebar-w);background:var(--black);display:flex;flex-direction:column;flex-shrink:0;}
+.sb-section{padding:14px 0 6px;}
+.sb-label{font-size:9px;text-transform:uppercase;letter-spacing:0.8px;color:rgba(255,255,255,0.3);padding:0 14px;margin-bottom:4px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;color:rgba(255,255,255,0.55);font-size:13px;transition:all 0.12s;border-left:3px solid transparent;}
+.sb-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9);}
+.sb-item.active{background:rgba(200,16,46,0.2);color:#fff;border-left-color:var(--red);}
+.sb-icon{font-size:14px;width:16px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:8px;padding:1px 6px;font-size:10px;}
+.sb-footer{margin-top:auto;padding:12px 14px;border-top:0.5px solid rgba(255,255,255,0.08);font-size:10px;color:rgba(255,255,255,0.25);line-height:1.6;}
+.content{flex:1;overflow-y:auto;background:var(--bg);}
+.bottom-nav{display:none;height:var(--bottomnav-h);background:var(--black);border-top:0.5px solid rgba(255,255,255,0.1);flex-shrink:0;}
+.bnav-inner{display:grid;grid-template-columns:repeat(4,1fr);height:100%;}
+.bnav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:rgba(255,255,255,0.4);font-size:10px;border:none;background:transparent;padding:6px 0;}
+.bnav-item.active{color:var(--gold);}
+.bnav-icon{font-size:18px;line-height:1;}
+.bnav-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.3px;}
+.page{display:none;padding:16px;}
+.page.active{display:block;}
+
+/* DASHBOARD */
+.dash-greet h2{font-size:17px;font-weight:600;margin-bottom:3px;}
+.dash-greet p{font-size:12px;color:var(--muted);}
+.countdown-card{background:var(--black);border-radius:var(--radius);padding:14px 16px;color:#fff;margin:14px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.cd-left{flex:1;}
+.cd-ev{font-size:11px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.cd-name{font-size:15px;font-weight:500;margin:3px 0 2px;}
+.cd-date{font-size:11px;color:rgba(255,255,255,0.55);}
+.cd-days{font-size:40px;font-weight:600;color:var(--gold);line-height:1;}
+.cd-lbl{font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;}
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.dc{background:var(--bg2);border-radius:8px;padding:12px 13px;}
+.dc.hl{border-left:3px solid var(--red);}
+.dc-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;}
+.dc-val{font-size:20px;font-weight:600;}
+.dc-val.pos{color:var(--green);}
+.dc-val.neg{color:var(--red);}
+.dc-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.sec-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px;}
+.alert-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--bg2);border:0.5px solid var(--border);margin-bottom:6px;cursor:pointer;transition:border-color 0.12s;}
+.alert-row:hover{border-color:var(--red);}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.alert-dot.red{background:var(--red);}
+.alert-dot.amber{background:var(--amber);}
+.alert-dot.green{background:var(--green);}
+.alert-text{flex:1;font-size:13px;font-weight:500;}
+.alert-sub2{font-size:11px;color:var(--muted);}
+.qa-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;}
+.qa-btn{padding:12px;border-radius:8px;border:0.5px solid var(--border);background:var(--bg);cursor:pointer;text-align:left;transition:all 0.12s;}
+.qa-btn:hover{border-color:var(--red);background:var(--red-light);}
+.qa-icon{font-size:17px;margin-bottom:5px;}
+.qa-lbl{font-size:13px;font-weight:600;}
+.qa-sub2{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* PL */
+.pl-tabs{display:flex;border-bottom:1px solid var(--border);margin:-16px -16px 14px;padding:0 16px;}
+.pl-tab{padding:10px 14px;font-size:12px;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.12s;margin-bottom:-1px;white-space:nowrap;}
+.pl-tab.active{color:var(--red);border-bottom-color:var(--red);font-weight:600;}
+.sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.sc{background:var(--bg2);border-radius:8px;padding:10px 11px;}
+.sc.hl{border-left:3px solid var(--red);}
+.sc .sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px;}
+.sc .sv{font-size:17px;font-weight:600;}
+.sc.pos .sv{color:var(--green);}
+.sc.neg .sv{color:var(--red);}
+.pl-sec{border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+.pl-sh{background:var(--black);color:#fff;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;}
+.pl-sh span{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.pl-sh .pl-shtot{font-size:13px;font-weight:600;color:var(--gold);}
+.pl-ch{display:grid;gap:6px;padding:5px 12px;background:var(--bg2);border-bottom:0.5px solid var(--border);}
+.pl-ch span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;text-align:right;}
+.pl-ch span:first-child{text-align:left;}
+.pl-row{display:grid;grid-template-columns:1fr 75px 75px 75px;gap:5px;padding:6px 12px;border-bottom:0.5px solid var(--border);align-items:center;font-size:12px;}
+.pl-row:last-child{border-bottom:none;}
+.pl-row.exp-row{grid-template-columns:1fr 110px;}
+.pl-row input{width:100%;border:0.5px solid var(--border);border-radius:4px;padding:4px 5px;font-size:12px;background:var(--bg);color:var(--text);text-align:right;}
+.pl-row input:focus{outline:none;border-color:var(--red);}
+.pl-comp{text-align:right;font-weight:600;}
+.net-bar{background:var(--black);color:#fff;border-radius:var(--radius);padding:13px 15px;display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+.net-lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.net-val{font-size:24px;font-weight:600;}
+.net-val.pos{color:var(--gold);}
+.net-val.neg{color:#ff6b6b;}
+
+/* INVENTORY */
+.inv-gate-wrap{max-width:400px;margin:0 auto;}
+.sg-title2{font-size:13px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;}
+.ug{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.uc{padding:12px;border:0.5px solid var(--border);border-radius:8px;cursor:pointer;text-align:center;transition:all 0.15s;}
+.uc:hover{border-color:var(--red);}
+.uc.sel{background:var(--red);color:#fff;border-color:var(--red);}
+.uc-nm{font-size:14px;font-weight:600;}
+.uc-rl{font-size:11px;opacity:0.7;margin-top:1px;}
+.inv-start{width:100%;padding:11px;background:var(--red);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;}
+.inv-start:disabled{opacity:0.4;cursor:not-allowed;}
+.sess-bar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--black);color:#fff;font-size:12px;border-radius:8px;margin-bottom:10px;flex-wrap:wrap;}
+.who-pill{background:var(--gold);color:var(--black);padding:2px 9px;border-radius:8px;font-size:11px;font-weight:600;}
+.end-sess{margin-left:auto;padding:3px 9px;border:1px solid rgba(255,255,255,0.3);border-radius:8px;background:transparent;color:rgba(255,255,255,0.7);font-size:11px;cursor:pointer;}
+.inv-ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.inv-ctrl input,.inv-ctrl select{border:0.5px solid var(--border);border-radius:5px;padding:5px 7px;font-size:12px;background:var(--bg);color:var(--text);}
+.inv-ctrl input{flex:1 1 100px;min-width:0;}
+.cat-hdr{display:flex;align-items:center;padding:7px 12px;background:rgba(200,16,46,0.06);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);cursor:pointer;gap:8px;}
+.cat-nm{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--red-dark);flex:1;}
+.cat-ct{font-size:11px;color:var(--muted);}
+.cat-ar{font-size:11px;color:var(--muted);transition:transform 0.15s;}
+.cat-ar.open{transform:rotate(90deg);}
+.item-row{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:0.5px solid var(--border);transition:background 0.1s;}
+.item-row:hover{background:var(--bg2);}
+.qty-b{min-width:30px;height:30px;border-radius:6px;background:var(--bg2);border:0.5px solid var(--border);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0 4px;}
+.qty-b.lo{background:var(--red-light);border-color:var(--red);color:var(--red);}
+.item-inf{flex:1;min-width:0;}
+.item-nm{font-size:13px;font-weight:600;}
+.item-sb{font-size:11px;color:var(--muted);margin-top:1px;}
+.loc-sel{border:0.5px solid var(--border);border-radius:12px;padding:4px 7px;font-size:11px;background:var(--bg);color:var(--text);max-width:118px;flex-shrink:0;}
+.loc-sel.chg{border-color:var(--red);color:var(--red);background:var(--red-light);}
+.cfm-b{padding:4px 9px;background:var(--red);color:#fff;border:none;border-radius:10px;font-size:11px;cursor:pointer;font-weight:600;display:none;flex-shrink:0;}
+.cfm-b.show{display:inline-block;}
+.opts-wrap{position:relative;flex-shrink:0;}
+.opts-b{width:26px;height:26px;border:0.5px solid var(--border);border-radius:5px;background:var(--bg);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.opts-b:hover{border-color:var(--red);color:var(--red);}
+.opts-menu{position:absolute;right:0;top:30px;background:var(--bg);border:0.5px solid var(--border);border-radius:8px;z-index:100;min-width:144px;box-shadow:0 4px 16px rgba(0,0,0,0.12);}
+.opts-menu button{display:block;width:100%;padding:9px 13px;text-align:left;border:none;background:transparent;font-size:12px;cursor:pointer;color:var(--text);}
+.opts-menu button:hover{background:var(--bg2);}
+.opts-menu button.danger{color:var(--red);}
+.add-row{display:flex;align-items:center;gap:5px;padding:7px 12px;border-top:0.5px dashed var(--border);flex-wrap:wrap;}
+.add-row input{flex:1 1 100px;min-width:0;border:0.5px solid var(--border);border-radius:5px;padding:5px 7px;font-size:12px;background:var(--bg);color:var(--text);}
+.add-row select{border:0.5px solid var(--border);border-radius:5px;padding:5px 7px;font-size:11px;background:var(--bg);color:var(--text);}
+.add-qb{padding:5px 10px;background:var(--red);color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer;font-weight:600;white-space:nowrap;}
+.add-mb{padding:5px 8px;border:0.5px solid var(--border);border-radius:5px;font-size:11px;cursor:pointer;background:var(--bg);color:var(--muted);white-space:nowrap;}
+.add-mb:hover{border-color:var(--red);color:var(--red);}
+
+/* AI */
+.ai-wrap{display:flex;flex-direction:column;height:calc(100vh - var(--topbar-h) - 80px);}
+.ai-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:8px;}
+.ai-msg{display:flex;gap:8px;align-items:flex-start;}
+.ai-msg.usr{flex-direction:row-reverse;}
+.ai-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.ai-av.bot{background:var(--red);color:#fff;}
+.ai-av.usr{background:var(--black);color:#fff;}
+.ai-bub{max-width:82%;padding:9px 12px;border-radius:10px;font-size:13px;line-height:1.55;}
+.ai-bub.bot{background:var(--bg2);border:0.5px solid var(--border);border-radius:3px 10px 10px 10px;}
+.ai-bub.usr{background:var(--red);color:#fff;border-radius:10px 3px 10px 10px;}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+.chip{padding:4px 10px;border:0.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--muted);font-size:11px;cursor:pointer;transition:all 0.12s;white-space:nowrap;}
+.chip:hover{border-color:var(--red);color:var(--red);}
+.ai-in-row{display:flex;gap:7px;padding-top:8px;border-top:0.5px solid var(--border);}
+.ai-in-row textarea{flex:1;border:0.5px solid var(--border);border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;resize:none;height:42px;background:var(--bg);color:var(--text);}
+.ai-in-row textarea:focus{outline:none;border-color:var(--red);}
+.ai-send-b{background:var(--red);color:#fff;border:none;border-radius:7px;padding:0 15px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;}
+.ai-send-b:disabled{opacity:0.5;cursor:not-allowed;}
+.ai-export-bar{display:flex;gap:6px;padding:6px 0 0;flex-wrap:wrap;}
+.ai-exp-sel{border:0.5px solid var(--border);border-radius:5px;padding:5px 7px;font-size:11px;background:var(--bg);color:var(--text);}
+.ai-exp-btn{padding:5px 11px;border-radius:5px;font-size:11px;cursor:pointer;background:var(--black);color:#fff;border:none;white-space:nowrap;}
+
+/* MODALS */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;}
+.md{background:var(--bg);border-radius:var(--radius);padding:18px;width:100%;max-width:420px;border:0.5px solid var(--border);max-height:calc(100vh - 40px);overflow-y:auto;}
+.md h2{font-size:14px;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--border);}
+.mf{margin-bottom:10px;}
+.mf label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px;}
+.mf input,.mf select,.mf textarea{width:100%;border:0.5px solid var(--border);border-radius:5px;padding:7px 9px;font-size:14px;background:var(--bg);color:var(--text);font-family:inherit;}
+.mf textarea{height:52px;resize:none;}
+.mf input:focus,.mf select:focus,.mf textarea:focus{outline:none;border-color:var(--red);}
+.tc2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.opt-div{margin:10px 0 6px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;border-top:0.5px solid var(--border);padding-top:8px;}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:13px;}
+.mb-p{padding:8px 18px;border-radius:5px;font-size:13px;cursor:pointer;font-weight:600;background:var(--red);color:#fff;border:none;}
+.mb-c{padding:8px 14px;border-radius:5px;font-size:13px;cursor:pointer;background:var(--bg);border:0.5px solid var(--border);color:var(--text);}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:7px 18px;border-radius:16px;font-size:12px;opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:2000;white-space:nowrap;}
+.toast.show{opacity:1;}
+
+@media(max-width:680px){
+  .sidebar{display:none;}
+  .bottom-nav{display:block;}
+  html,body{overflow:auto;}
+  .shell{height:auto;min-height:100vh;}
+  .main-area{overflow:visible;}
+  .content{overflow:visible;}
+  .dash-grid{grid-template-columns:1fr 1fr;}
+  .sum-row{grid-template-columns:1fr 1fr;}
+  .qa-grid{grid-template-columns:1fr;}
+  .ai-wrap{height:calc(100svh - var(--topbar-h) - var(--bottomnav-h) - 90px);}
+  .toast{bottom:calc(var(--bottomnav-h) + 8px);}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="topbar-logo">Matrix Dancesport 2026</div>
+    <div class="topbar-right">
+      <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncTxt">Sheets</span></div>
+      <div class="session-pill" id="sessionPill" onclick="showSessionModal()">Sign in</div>
+    </div>
+  </div>
+  <div class="main-area">
+    <div class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Overview</div>
+        <div class="sb-item active" onclick="nav('dashboard')" id="si-dashboard"><span class="sb-icon">⊙</span>Dashboard</div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Tools</div>
+        <div class="sb-item" onclick="nav('pl')" id="si-pl"><span class="sb-icon">$</span>P&amp;L Calculator</div>
+        <div class="sb-item" onclick="nav('inventory')" id="si-inventory"><span class="sb-icon">▦</span>Inventory<span class="sb-badge" id="inv-badge" style="display:none"></span></div>
+        <div class="sb-item" onclick="nav('ai')" id="si-ai"><span class="sb-icon">✦</span>AI Assistant</div>
+      </div>
+      <div class="sb-footer">Matrix Dancesport<br>LMO Events LLC</div>
+    </div>
+    <div class="content">
+      <div class="page active" id="page-dashboard">
+        <div class="dash-greet"><h2 id="dashGreet">Good morning</h2><p id="dashSub"></p></div>
+        <div class="countdown-card">
+          <div class="cd-left">
+            <div class="cd-ev" id="cdEv"></div>
+            <div class="cd-name" id="cdName"></div>
+            <div class="cd-date" id="cdDate"></div>
+          </div>
+          <div style="text-align:center"><div class="cd-days" id="cdDays">—</div><div class="cd-lbl">days to go</div></div>
+        </div>
+        <div class="dash-grid" id="dashCards"></div>
+        <div class="sec-title">Needs attention</div>
+        <div id="dashAlerts"></div>
+        <div class="sec-title" style="margin-top:14px;margin-bottom:8px">Quick actions</div>
+        <div class="qa-grid">
+          <div class="qa-btn" onclick="nav('pl')"><div class="qa-icon">$</div><div class="qa-lbl">P&amp;L Calculator</div><div class="qa-sub2">Review revenue &amp; expenses</div></div>
+          <div class="qa-btn" onclick="nav('inventory')"><div class="qa-icon">▦</div><div class="qa-lbl">Inventory</div><div class="qa-sub2">Log item locations</div></div>
+          <div class="qa-btn" onclick="nav('ai')"><div class="qa-icon">✦</div><div class="qa-lbl">AI Assistant</div><div class="qa-sub2">Strategy, drafts, analysis</div></div>
+          <div class="qa-btn" onclick="syncAll()"><div class="qa-icon">⟳</div><div class="qa-lbl">Sync to Sheets</div><div class="qa-sub2">Push all data to Google Sheets</div></div>
+        </div>
+      </div>
+      <div class="page" id="page-pl">
+        <div class="pl-tabs">
+          <button class="pl-tab active" onclick="plMode='plan';renderPL();setPlTab(this)">Planning</button>
+          <button class="pl-tab" onclick="plMode='actual';renderPL();setPlTab(this)">Actuals</button>
+        </div>
+        <div id="pl-content"></div>
+      </div>
+      <div class="page" id="page-inventory">
+        <div id="inv-gate"></div>
+        <div id="inv-app" style="display:none">
+          <div class="sess-bar">
+            <span class="who-pill" id="invWho"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,0.4)">Change location → Confirm to log</span>
+            <button class="end-sess" onclick="endInvSess()">End session</button>
+          </div>
+          <div class="inv-ctrl">
+            <input type="text" id="invSrch" placeholder="Search..." oninput="renderInv()">
+            <select id="invFLoc" onchange="renderInv()">
+              <option value="">All locations</option>
+              <option value="storage">Storage</option>
+              <option value="michael">Michael's unit</option>
+              <option value="matrix-venue">Matrix venue</option>
+              <option value="replace">Needs replacement</option>
+            </select>
+          </div>
+          <div id="invList"></div>
+        </div>
+      </div>
+      <div class="page" id="page-ai">
+        <div class="ai-wrap">
+          <div class="ai-msgs" id="aiMsgs"></div>
+          <div>
+            <div class="chips" id="aiChips"></div>
+            <div class="ai-in-row">
+              <textarea id="aiInput" placeholder="Ask about financials, strategy, contracts..." onkeydown="aiKey(event)"></textarea>
+              <button class="ai-send-b" id="aiSendBtn" onclick="aiSend()">Send</button>
+            </div>
+            <div class="ai-export-bar">
+              <select class="ai-exp-sel" id="aiExpWhat"><option value="full">Full conversation</option><option value="ai">AI responses only</option><option value="summary">AI summary</option><option value="last">Last response</option></select>
+              <select class="ai-exp-sel" id="aiExpFolder"><option value="matrix">Matrix DS folder</option><option value="lmo">LMO General</option></select>
+              <button class="ai-exp-btn" onclick="aiExport()">Export to Google Docs</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="bnav-inner">
+      <button class="bnav-item active" onclick="nav('dashboard')" id="bn-dashboard"><span class="bnav-icon">⊙</span><span class="bnav-lbl">Home</span></button>
+      <button class="bnav-item" onclick="nav('pl')" id="bn-pl"><span class="bnav-icon">$</span><span class="bnav-lbl">P&amp;L</span></button>
+      <button class="bnav-item" onclick="nav('inventory')" id="bn-inventory"><span class="bnav-icon">▦</span><span class="bnav-lbl">Inventory</span></button>
+      <button class="bnav-item" onclick="nav('ai')" id="bn-ai"><span class="bnav-icon">✦</span><span class="bnav-lbl">Assistant</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION MODAL -->
+<div class="mo" id="sessionModal" style="display:none" onclick="maybeClose(event,'sessionModal')">
+  <div class="md" onclick="event.stopPropagation()">
+    <h2>Who are you?</h2>
+    <div class="ug">
+      <div class="uc" onclick="selSessUser('Michael')"><div class="uc-nm">Michael</div><div class="uc-rl">Organizer</div></div>
+      <div class="uc" onclick="selSessUser('Staff')"><div class="uc-nm">Staff</div><div class="uc-rl">Enter name →</div></div>
+    </div>
+    <div id="sessStaffRow" style="display:none;margin-bottom:10px"><input type="text" id="sessStaffName" placeholder="Your name..." style="width:100%;border:0.5px solid var(--border);border-radius:5px;padding:8px;font-size:14px;background:var(--bg);color:var(--text)"></div>
+    <button class="mb-p" id="sessStartBtn" style="width:100%" onclick="startSess()" disabled>Select who you are</button>
+  </div>
+</div>
+
+<!-- EDIT ITEM MODAL -->
+<div class="mo" id="editItemModal" style="display:none" onclick="maybeClose(event,'editItemModal')">
+  <div class="md" onclick="event.stopPropagation()">
+    <h2 id="editItemTitle">Edit item</h2>
+    <div class="mf"><label>Name</label><input type="text" id="ei-name"></div>
+    <div class="tc2">
+      <div class="mf"><label>Category</label><select id="ei-cat"></select></div>
+      <div class="mf"><label>Scope</label><select id="ei-scope"><option value="matrix">Matrix DS</option><option value="global">Global</option></select></div>
+    </div>
+    <div class="tc2">
+      <div class="mf"><label>Quantity</label><input type="number" id="ei-qty" min="0"></div>
+      <div class="mf"><label>Container</label><input type="text" id="ei-container"></div>
+    </div>
+    <div class="mf"><label>Notes</label><textarea id="ei-notes"></textarea></div>
+    <div class="mbtns"><button class="mb-c" onclick="closeModal('editItemModal')">Cancel</button><button class="mb-p" onclick="saveItemEdit()">Save</button></div>
+  </div>
+</div>
+
+<!-- ADD ITEM MODAL -->
+<div class="mo" id="addItemModal" style="display:none" onclick="maybeClose(event,'addItemModal')">
+  <div class="md" onclick="event.stopPropagation()">
+    <h2>Add item — <span id="addItemCatLbl" style="color:var(--red)"></span></h2>
+    <div class="mf"><label>Name *</label><input type="text" id="ai2-name"></div>
+    <div class="mf"><label>Location *</label><select id="ai2-loc"><option value="storage">Storage</option><option value="michael">Michael's unit</option><option value="matrix-venue">Matrix venue</option><option value="replace">Needs replacement</option></select></div>
+    <div class="opt-div">Optional</div>
+    <div class="tc2">
+      <div class="mf"><label>Qty</label><input type="number" id="ai2-qty" value="1"></div>
+      <div class="mf"><label>Scope</label><select id="ai2-scope"><option value="matrix">Matrix DS</option><option value="global">Global</option></select></div>
+    </div>
+    <div class="mf"><label>Container</label><input type="text" id="ai2-container"></div>
+    <div class="mf"><label>Notes</label><textarea id="ai2-notes"></textarea></div>
+    <div class="mbtns"><button class="mb-c" onclick="closeModal('addItemModal')">Cancel</button><button class="mb-p" onclick="saveNewItem()">Add item</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LOC={storage:'Storage',michael:"Michael's unit",'matrix-venue':'Matrix venue',replace:'Needs replacement',retired:'Retired'};
+const EVS={matrix:{name:'Matrix Dancesport 2026',short:'Matrix DS',venue:'OKC Farmers Public Market, Oklahoma City',dates:'May 30, 2026',d:new Date('2026-05-30')}};
+const fmt=n=>'$'+Math.round(n).toLocaleString();
+const fmtV=n=>(n>=0?'+':'')+fmt(n);
+let CE='matrix',CU='',CP='dashboard',invSess=false,editItemId=null,addItemCat='';
+let invCollapsed=new Set(),invPending={},plMode='plan',aiMsgs=[],aiLoading=false,aiInited=false;
+
+const AI_SYS=`You are the AI assistant for Matrix Dancesport 2026, organized by Michael Choi and Edward Simon (50/50 partnership). Competition: Saturday May 30, 2026 at OKC Farmers Public Market (311 S Klein Ave, Oklahoma City OK 73108). Workshops: Sunday May 31 at Dance Makers OKC (separate venue).
+
+ENTRY PRICING (official 2026 fees): Single Dance — Adult $45, Junior $20. Development Dance — Adult $55, Junior $30. Scholarships — Open $160, Closed $120 (no Am/Am scholarships). Multi-Dance Challenge — Adult $120, Junior $55/event. Solos/Formations — $110 base + $20/additional performer beyond 2. Spectator Admission — Adults $20, Juniors $10, Competitors free. Workshops — $30/session or $90 all-day pass.
+
+VENUE — OKC Farmers Public Market: Cost $4,500 (contract signed 3/31/2026 with Madison Amber). Included: cleaning, security. NOT included: Sound/AV (must source 3rd-party rental). Possession: 9:00am. Max capacity 2,500. Cash bar only — ALL beverages from Market, no outside drinks. NO tape on walls/ceilings/floors. No confetti, rice, glitter, silly string. $500 refundable damage deposit paid at signing. $1,000 non-refundable deposit paid at signing.
+
+KEY DEADLINES: April 29 — early bird registration + hotel room block cutoff. May 20 — insurance certificate due (must show $1M liability, list OKC Farmers Market LLC as additional insured). ~May 19 — finalized floor/layout plan due (7 business days prior). ~May 23 — mailed entry deadline. May 23 — security plan required (7 days prior). May 30 — Competition day.
+
+STAFF: Judges flying in — JT, Ekaterina Kuznetsova, Michelle Hudson, Tamsyn. Anjel Ortega (Music Director), Ashley Melville (Scrutineer/Registrar), Edward Simon (instructor), Michael Choi (organizer). Local — John Elsbury, Ryan, John Swick, Brandy (drivers/local staff), Brian Picard (emcee).
+
+PAYMENT: Competitors pay via Zelle/Check/Venmo to Big Apple Ballroom (interim banking); cash only accepted at event door. Banking migrating to LMO Events LLC post-buyout — avoid committing spend until buyout closes.
+
+Be specific and actionable. Flag deadline proximity when relevant.`;
+
+const cats=['Awards & Medals','Printing & Office','Décor & Holiday','AV & Lighting','Inflatables','Registration','Supplies & Misc'];
+let inv=[
+  {id:1,name:'Printers — Brother HL-L2405w',cat:'Printing & Office',scope:'global',qty:2,location:'storage',container:'',notes:'',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:2,name:'Toner — Brother 830 XL',cat:'Printing & Office',scope:'global',qty:2,location:'storage',container:'',notes:'',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:3,name:'Copy paper',cat:'Printing & Office',scope:'global',qty:3,location:'storage',container:'One box',notes:'3 reams',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:4,name:'Tape dispenser',cat:'Supplies & Misc',scope:'global',qty:1,location:'storage',container:'',notes:'',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:5,name:'HDMI cable',cat:'Supplies & Misc',scope:'global',qty:1,location:'storage',container:'',notes:'',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:6,name:'Clipboards',cat:'Supplies & Misc',scope:'global',qty:6,location:'storage',container:'',notes:'For judges',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:7,name:'Pens / pencils',cat:'Supplies & Misc',scope:'global',qty:30,location:'storage',container:'',notes:'',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:8,name:'Labels and manila envelopes',cat:'Supplies & Misc',scope:'global',qty:1,location:'storage',container:'Plastic crate',notes:'',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:9,name:'Tube lights (working)',cat:'AV & Lighting',scope:'global',qty:3,location:'storage',container:'',notes:'',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:10,name:'Competition numbers',cat:'Registration',scope:'matrix',qty:0,location:'replace',container:'',notes:'Need to order for 2026',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:11,name:'Registration supply bag',cat:'Registration',scope:'matrix',qty:1,location:'michael',container:'',notes:'Pens, tape, stapler, safety pins',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:12,name:'Matrix banner / signage',cat:'Registration',scope:'matrix',qty:0,location:'replace',container:'',notes:'To be printed',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:13,name:'Trophies / awards',cat:'Awards & Medals',scope:'matrix',qty:0,location:'replace',container:'',notes:'Need to order',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:14,name:'Medals',cat:'Awards & Medals',scope:'matrix',qty:0,location:'replace',container:'',notes:'Need to order',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:15,name:'Tablecloths',cat:'Décor & Holiday',scope:'matrix',qty:4,location:'storage',container:'',notes:'Registration and judges tables',lastBy:'Michael',lastDate:'2026-04-26'},
+  {id:16,name:'Centerpieces / decor',cat:'Décor & Holiday',scope:'matrix',qty:0,location:'replace',container:'',notes:'Source for event',lastBy:'Michael',lastDate:'2026-04-26'},
+]
+
+const PL={
+  matrix:{
+    rev:{'Single dance — adult':{q:200,p:45},'Single dance — junior':{q:40,p:20},'Development dance — adult':{q:80,p:55},'Development dance — junior':{q:20,p:30},'Scholarship — Open':{q:15,p:160},'Scholarship — Closed':{q:10,p:120},'Multi-Dance Challenge — adult':{q:20,p:120},'Multi-Dance Challenge — junior':{q:8,p:55},'Solo / Formation entry':{q:5,p:110},'Workshop — single session':{q:20,p:30},'Workshop — all-day pass':{q:30,p:90},'Spectator admission — adult':{q:60,p:20},'Spectator admission — junior':{q:20,p:10},'Vendor table fees':{q:2,p:200}},
+    exp:{'Venue — OKC Farmers Public Market':{a:4500},'Damage deposit — OKC FPM (refundable)':{a:500},'Venue — Dance Makers OKC (workshops)':{a:800},'AV / Sound equipment (3rd-party rental)':{a:1200},'Music Director (Anjel Ortega)':{a:800},'Adjudicator fees':{a:4000},'Adjudicator travel':{a:2000},'Adjudicator hotel':{a:1500},'Emcee (Brian Picard)':{a:300},'Scrutineer / Registrar':{a:500},'Awards / trophies':{a:1000},'Printing & branded materials':{a:400},'Decorations':{a:300},'Staff meals':{a:600},'Event staffing (additional)':{a:400},'Insurance (liability cert)':{a:400},'Miscellaneous':{a:500}}
+  }
+};
+const plAct={matrix:{r:0,e:0}};
+
+function cRev(ev){return Object.values(PL[ev].rev).reduce((s,r)=>s+(r.q*r.p),0);}
+function cExp(ev){return Object.values(PL[ev].exp).reduce((s,e)=>s+(Number(e.a)||0),0);}
+
+function nav(p){
+  CP=p;
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(x=>x.classList.remove('active'));
+  const si=document.getElementById('si-'+p);if(si)si.classList.add('active');
+  document.querySelectorAll('.bnav-item').forEach(x=>x.classList.remove('active'));
+  const bn=document.getElementById('bn-'+p);if(bn)bn.classList.add('active');
+  if(p==='dashboard')renderDash();
+  if(p==='pl')renderPL();
+  if(p==='inventory')renderInvGate();
+  if(p==='ai')initAI();
+}
+
+function switchEvent(ev){
+  CE=ev;
+  document.querySelectorAll('.ev-btn').forEach((b,i)=>b.classList.toggle('active',['cds','ok'][i]===ev));
+  if(CP==='dashboard')renderDash();
+  if(CP==='pl')renderPL();
+  if(CP==='inventory')renderInv();
+}
+
+function showSessionModal(){document.getElementById('sessionModal').style.display='flex';}
+function selSessUser(n){
+  document.querySelectorAll('#sessionModal .uc').forEach(c=>c.classList.toggle('sel',c.querySelector('.uc-nm').textContent===n));
+  document.getElementById('sessStaffRow').style.display=n==='Staff'?'block':'none';
+  const b=document.getElementById('sessStartBtn');b.disabled=false;b.dataset.u=n;b.textContent='Start as '+n;
+}
+function startSess(){
+  let n=document.getElementById('sessStartBtn').dataset.u||'';
+  if(n==='Staff'){const sn=document.getElementById('sessStaffName').value.trim();if(sn)n='Staff: '+sn;}
+  CU=n;document.getElementById('sessionPill').textContent=n;closeModal('sessionModal');showToast('Session started as '+n);
+  if(CP==='dashboard')renderDash();
+}
+
+function renderDash(){
+  const ev=EVS[CE];const now=new Date();
+  const days=Math.ceil((ev.d-now)/(864e5));
+  const h=now.getHours();
+  document.getElementById('dashGreet').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+(CU?' — '+CU.split(':')[0].trim():'');
+  document.getElementById('dashSub').textContent=ev.name+' · '+ev.dates;
+  document.getElementById('cdEv').textContent=ev.name;
+  document.getElementById('cdName').textContent=ev.venue;
+  document.getElementById('cdDate').textContent=ev.dates;
+  document.getElementById('cdDays').textContent=days>0?days:'Soon';
+  const rev=cRev(CE),exp=cExp(CE),net=rev-exp;
+  const mg=rev>0?((net/rev)*100).toFixed(1):'0.0';
+  document.getElementById('dashCards').innerHTML=`
+    <div class="dc hl"><div class="dc-lbl">Revenue</div><div class="dc-val">${fmt(rev)}</div><div class="dc-sub">Projected</div></div>
+    <div class="dc"><div class="dc-lbl">Expenses</div><div class="dc-val">${fmt(exp)}</div><div class="dc-sub">Projected</div></div>
+    <div class="dc"><div class="dc-lbl">Net Income</div><div class="dc-val ${net>=0?'pos':'neg'}">${fmt(net)}</div><div class="dc-sub">${mg}% margin</div></div>`;
+  const rpl=inv.filter(i=>i.location==='replace'&&!i.retired);
+  const mic=inv.filter(i=>i.location==='michael');
+  const today=now;
+  const deadlines=[
+    {date:new Date('2026-04-29'),label:'Early bird + hotel room block cutoff',sub:'Registration pricing increases after this date',urgency:'red'},
+    {date:new Date('2026-05-19'),label:'Floor layout plan due to OKC Farmers Market',sub:'Required 7 business days before event — submit to Madison Amber',urgency:'amber'},
+    {date:new Date('2026-05-20'),label:'Insurance certificate due',sub:'$1M liability, list OKC Farmers Market LLC as additional insured',urgency:'red'},
+    {date:new Date('2026-05-23'),label:'Security plan due + mailed entry deadline',sub:'Security plan req\'d 7 days prior; competitor entries must be postmarked by May 23',urgency:'amber'},
+  ];
+  let al='';
+  deadlines.forEach(d=>{const dDays=Math.ceil((d.date-today)/(864e5));if(dDays>=0&&dDays<=30){al+=`<div class="alert-row" onclick="nav('ai')"><span class="alert-dot ${d.urgency}"></span><div><div class="alert-text">${d.label} — ${dDays===0?'TODAY':dDays+' day'+(dDays===1?'':'s')}</div><div class="alert-sub2">${d.sub}</div></div><span>→</span></div>`;}});
+  al+='<div class="alert-row" onclick="nav(\'inventory\')"><span class="alert-dot amber"></span><div><div class="alert-text">Sound/AV not included in venue contract</div><div class="alert-sub2">OKC Farmers Market lists AV as N/A — must book 3rd-party rental</div></div><span>→</span></div>';
+  if(rpl.length)al+=`<div class="alert-row" onclick="nav('inventory')"><span class="alert-dot red"></span><div><div class="alert-text">${rpl.length} item${rpl.length>1?'s':''} need replacement</div><div class="alert-sub2">${rpl.map(i=>i.name).join(', ')}</div></div><span>→</span></div>`;
+  if(mic.length)al+=`<div class="alert-row" onclick="nav('inventory')"><span class="alert-dot amber"></span><div><div class="alert-text">${mic.length} item${mic.length>1?'s':''} at Michael's storage</div><div class="alert-sub2">Coordinate pickup before event</div></div><span>→</span></div>`;
+  if(net<0)al+=`<div class="alert-row" onclick="nav('pl')"><span class="alert-dot red"></span><div><div class="alert-text">P&L shows a projected loss</div><div class="alert-sub2">Review expenses in P&L calculator</div></div><span>→</span></div>`;
+  if(!al)al='<div class="alert-row"><span class="alert-dot green"></span><div class="alert-text">No urgent items — all looks good.</div></div>';
+  document.getElementById('dashAlerts').innerHTML=al;
+  const b=document.getElementById('inv-badge');b.textContent=rpl.length;b.style.display=rpl.length?'inline':'none';
+}
+
+function setPlTab(btn){document.querySelectorAll('.pl-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');}
+function renderPL(){
+  const ev=CE,rev=cRev(ev),exp=cExp(ev),net=rev-exp,mg=rev>0?((net/rev)*100).toFixed(1):'0.0';
+  if(plMode==='combined'){
+    const cR=cRev('cds'),cE=cExp('cds'),cN=cR-cE,oR=cRev('ok'),oE=cExp('ok'),oN=oR-oE,tR=cR+oR,tE=cE+oE,tN=cN+oN;
+    document.getElementById('pl-content').innerHTML=`<div class="sum-row"><div class="sc hl"><div class="sl">Combined Rev</div><div class="sv">${fmt(tR)}</div></div><div class="sc"><div class="sl">Combined Exp</div><div class="sv">${fmt(tE)}</div></div><div class="sc ${tN>=0?'pos':'neg'}"><div class="sl">Combined Net</div><div class="sv">${fmt(tN)}</div></div><div class="sc"><div class="sl">Avg Margin</div><div class="sv">${tR>0?((tN/tR)*100).toFixed(1):0}%</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${['cds','ok'].map(e=>{const r=cRev(e),x=cExp(e),n=r-x;return`<div class="pl-sec"><div class="pl-sh"><span>${EVS[e].short}</span><span class="pl-shtot ${n<0?'neg':''}">${fmt(n)}</span></div><div style="padding:10px 12px;font-size:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--muted)">Revenue</span><span>${fmt(r)}</span></div><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="color:var(--muted)">Expenses</span><span>${fmt(x)}</span></div><div style="display:flex;justify-content:space-between;font-weight:600;border-top:0.5px solid var(--border);padding-top:6px"><span>Net</span><span class="${n<0?'neg':''}">${fmt(n)}</span></div></div></div>`}).join('')}</div>`;return;
+  }
+  if(plMode==='actual'){
+    const aR=plAct[ev].r,aE=plAct[ev].e,aN=aR-aE;
+    document.getElementById('pl-content').innerHTML=`<div class="sum-row"><div class="sc"><div class="sl">Plan Rev</div><div class="sv">${fmt(rev)}</div></div><div class="sc hl"><div class="sl">Actual Rev</div><div class="sv">${fmt(aR)}</div></div><div class="sc"><div class="sl">Plan Net</div><div class="sv">${fmt(net)}</div></div><div class="sc ${aN>=0?'pos':'neg'}"><div class="sl">Actual Net</div><div class="sv">${fmt(aN)}</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div><div style="font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Actual revenue</div><input type="number" value="${aR}" style="width:100%;border:0.5px solid var(--border);border-radius:5px;padding:8px;font-size:16px;background:var(--bg);color:var(--text)" oninput="plAct['${ev}'].r=parseFloat(this.value)||0;renderPL();syncActuals()"><div style="font-size:11px;color:var(--muted);margin-top:3px">Plan: ${fmt(rev)} · <span style="color:${aR-rev>=0?'var(--green)':'var(--red)'}">${fmtV(aR-rev)}</span></div></div><div><div style="font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px">Actual expenses</div><input type="number" value="${aE}" style="width:100%;border:0.5px solid var(--border);border-radius:5px;padding:8px;font-size:16px;background:var(--bg);color:var(--text)" oninput="plAct['${ev}'].e=parseFloat(this.value)||0;renderPL();syncActuals()"><div style="font-size:11px;color:var(--muted);margin-top:3px">Plan: ${fmt(exp)} · <span style="color:${exp-aE>=0?'var(--green)':'var(--red)'}">${fmtV(exp-aE)}</span></div></div></div><div class="net-bar"><div><div class="net-lbl">Variance — ${EVS[ev].short}</div></div><div class="net-val ${aN-net>=0?'pos':'neg'}">${fmtV(aN-net)}</div></div>`;return;
+  }
+  const rRows=Object.entries(PL[ev].rev).map(([l,r])=>{const t=r.q*r.p;return`<div class="pl-row"><div>${l}</div><input type="number" value="${r.q}" min="0" oninput="PL['${ev}'].rev['${l}'].q=parseFloat(this.value)||0;updPL()"><input type="number" value="${r.p}" oninput="PL['${ev}'].rev['${l}'].p=parseFloat(this.value)||0;updPL()"><div class="pl-comp">${fmt(t)}</div></div>`;}).join('');
+  const eRows=Object.entries(PL[ev].exp).map(([l,e])=>`<div class="pl-row exp-row"><div>${l}</div><input type="number" value="${e.a}" min="0" oninput="PL['${ev}'].exp['${l}'].a=parseFloat(this.value)||0;updPL()"></div>`).join('');
+  document.getElementById('pl-content').innerHTML=`<div class="sum-row"><div class="sc hl"><div class="sl">Revenue</div><div class="sv" id="plR">${fmt(rev)}</div></div><div class="sc"><div class="sl">Expenses</div><div class="sv" id="plE">${fmt(exp)}</div></div><div class="sc ${net>=0?'pos':'neg'}"><div class="sl">Net</div><div class="sv ${net>=0?'pos':'neg'}" id="plN">${fmt(net)}</div></div><div class="sc"><div class="sl">Margin</div><div class="sv" id="plM">${mg}%</div></div></div><div class="pl-sec"><div class="pl-sh"><span>Revenue</span><span class="pl-shtot" id="plRH">${fmt(rev)}</span></div><div class="pl-ch" style="grid-template-columns:1fr 75px 75px 75px"><span>Item</span><span>Qty</span><span>Price</span><span>Total</span></div>${rRows}</div><div class="pl-sec"><div class="pl-sh"><span>Expenses</span><span class="pl-shtot" id="plEH">${fmt(exp)}</span></div>${eRows}</div><div class="net-bar"><div><div class="net-lbl">Net — ${EVS[ev].short}</div></div><div class="net-val ${net>=0?'pos':'neg'}" id="plNB">${fmt(net)}</div></div>`;
+}
+let _plTimer=null;
+function updPL(){
+  const ev=CE,r=cRev(ev),e=cExp(ev),n=r-e,m=r>0?((n/r)*100).toFixed(1):'0.0';
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  s('plR',fmt(r));s('plE',fmt(e));s('plN',fmt(n));s('plM',m+'%');s('plRH',fmt(r));s('plEH',fmt(e));s('plNB',fmt(n));
+  ['plN','plNB'].forEach(id=>{const el=document.getElementById(id);if(el){el.className=el.className.replace(/ ?(pos|neg)/g,'');el.classList.add(n>=0?'pos':'neg');}});
+  clearTimeout(_plTimer);_plTimer=setTimeout(syncPLPlan,1500);
+  renderDash();
+}
+
+function renderInvGate(){
+  if(CU){invSess=true;}
+  if(invSess){
+    document.getElementById('inv-gate').style.display='none';
+    document.getElementById('inv-app').style.display='block';
+    document.getElementById('invWho').textContent=CU;renderInv();
+  } else {
+    document.getElementById('inv-app').style.display='none';
+    document.getElementById('inv-gate').style.display='block';
+    document.getElementById('inv-gate').innerHTML=`<div class="inv-gate-wrap"><div class="sg-title2">Who are you?</div><div class="ug"><div class="uc" onclick="invSel('Michael')"><div class="uc-nm">Michael</div><div class="uc-rl">Organizer</div></div><div class="uc" onclick="invSel('Staff')"><div class="uc-nm">Staff</div><div class="uc-rl">Enter name →</div></div></div><div id="invStaffRow" style="display:none;margin-bottom:10px"><input type="text" id="invStaffName" placeholder="Your name..." style="width:100%;border:0.5px solid var(--border);border-radius:5px;padding:8px;font-size:14px;background:var(--bg);color:var(--text)"></div><button class="inv-start" id="invStartBtn" onclick="startInvSess()" disabled>Select who you are</button></div>`;
+  }
+}
+function invSel(n){document.querySelectorAll('#inv-gate .uc').forEach(c=>c.classList.toggle('sel',c.querySelector('.uc-nm').textContent===n));document.getElementById('invStaffRow').style.display=n==='Staff'?'block':'none';const b=document.getElementById('invStartBtn');b.disabled=false;b.dataset.u=n;b.textContent='Start as '+n;}
+function startInvSess(){let n=document.getElementById('invStartBtn').dataset.u||'';if(n==='Staff'){const sn=document.getElementById('invStaffName').value.trim();if(sn)n='Staff: '+sn;}CU=n;invSess=true;document.getElementById('sessionPill').textContent=n;document.getElementById('inv-gate').style.display='none';document.getElementById('inv-app').style.display='block';document.getElementById('invWho').textContent=n;renderInv();}
+function endInvSess(){invSess=false;document.getElementById('inv-app').style.display='none';document.getElementById('inv-gate').style.display='block';renderInvGate();}
+
+function renderInv(){
+  const s=(document.getElementById('invSrch')||{}).value?.toLowerCase()||'';
+  const fL=(document.getElementById('invFLoc')||{}).value||'';
+  let html='';
+  cats.forEach(cat=>{
+    const items=inv.filter(i=>i.cat===cat&&!i.retired&&(!s||i.name.toLowerCase().includes(s)||(i.container||'').toLowerCase().includes(s))&&(!fL||i.location===fL)&&(i.scope==='global'||i.scope===CE));
+    if(!items.length&&s)return;
+    const col=invCollapsed.has(cat);
+    html+=`<div><div class="cat-hdr" onclick="tgCat('${cat.replace(/'/g,"\\'")}')"><span class="cat-nm">${cat}</span><span class="cat-ct">${items.length}</span><span class="cat-ar ${col?'':'open'}">▶</span></div>`;
+    if(!col){
+      items.forEach(i=>{
+        const p=invPending[i.id],dl=p||i.location,ch=!!p,sub=[i.container,i.notes].filter(Boolean).join(' · ');
+        html+=`<div class="item-row"><div class="qty-b ${i.qty<=1&&i.location!=='retired'?'lo':''}">${i.qty}</div><div class="item-inf"><div class="item-nm">${i.name}</div>${sub?`<div class="item-sb">${sub}</div>`:''}</div><select class="loc-sel ${ch?'chg':''}" id="ls_${i.id}" onchange="invLC(${i.id},this)">${Object.entries(LOC).filter(([v])=>v!=='retired').map(([v,l])=>`<option value="${v}"${dl===v?' selected':''}>${l}</option>`).join('')}</select><button class="cfm-b ${ch?'show':''}" id="cf_${i.id}" onclick="invCF(${i.id})">Confirm</button><div class="opts-wrap"><button class="opts-b" onclick="tgIM(event,${i.id})">⋯</button><div class="opts-menu" id="im_${i.id}" style="display:none"><button onclick="openEI(${i.id});cIM()">Edit</button><button onclick="retI(${i.id});cIM()">Retire</button><button class="danger" onclick="delI(${i.id});cIM()">Remove</button></div></div></div>`;
+      });
+      const k=cat.replace(/[\s&]/g,'_');
+      html+=`<div class="add-row"><input type="text" id="qn_${k}" placeholder="Add to ${cat}..."><select id="ql_${k}">${Object.entries(LOC).filter(([v])=>v!=='retired').map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select><button class="add-qb" onclick="qAdd('${cat.replace(/'/g,"\\'")}')">Add</button><button class="add-mb" onclick="oAI('${cat.replace(/'/g,"\\'")}')">More</button></div>`;
+    }
+    html+='</div>';
+  });
+  const el=document.getElementById('invList');if(el)el.innerHTML=html;
+}
+function tgCat(c){invCollapsed.has(c)?invCollapsed.delete(c):invCollapsed.add(c);renderInv();}
+function invLC(id,sel){const i=inv.find(x=>x.id===id);if(sel.value===i.location){delete invPending[id];sel.classList.remove('chg');document.getElementById('cf_'+id).classList.remove('show');}else{invPending[id]=sel.value;sel.classList.add('chg');document.getElementById('cf_'+id).classList.add('show');}}
+function invCF(id){const i=inv.find(x=>x.id===id);const nl=invPending[id];if(!nl)return;const from=i.location;const now=new Date();const ts=now.toISOString().slice(0,10)+' '+now.toTimeString().slice(0,5);i.location=nl;i.lastBy=CU;i.lastDate=now.toISOString().slice(0,10);delete invPending[id];syncRow(i.name,from,nl,ts);syncInventory();renderInv();renderDash();showToast(`${i.name} → ${LOC[nl]}`);}
+function qAdd(cat){const k=cat.replace(/[\s&]/g,'_');const n=document.getElementById('qn_'+k)?.value.trim();const l=document.getElementById('ql_'+k)?.value||'storage';if(!n){showToast('Enter a name');return;}const nid=inv.length?Math.max(...inv.map(i=>i.id))+1:1;inv.push({id:nid,name:n,cat,scope:'matrix',qty:1,location:l,container:'',notes:'',lastBy:CU,lastDate:new Date().toISOString().slice(0,10)});document.getElementById('qn_'+k).value='';syncInventory();renderInv();showToast(`"${n}" added`);}
+function retI(id){const i=inv.find(x=>x.id===id);if(!confirm(`Retire "${i.name}"?`))return;i.location='retired';i.retired=true;syncInventory();renderInv();renderDash();}
+function delI(id){const i=inv.find(x=>x.id===id);if(!confirm(`Remove "${i.name}"?`))return;inv=inv.filter(x=>x.id!==id);syncInventory();renderInv();renderDash();}
+function openEI(id){editItemId=id;const i=inv.find(x=>x.id===id);document.getElementById('editItemTitle').textContent='Edit — '+i.name;document.getElementById('ei-name').value=i.name;document.getElementById('ei-scope').value=i.scope;document.getElementById('ei-qty').value=i.qty;document.getElementById('ei-container').value=i.container||'';document.getElementById('ei-notes').value=i.notes||'';document.getElementById('ei-cat').innerHTML=cats.map(c=>`<option${c===i.cat?' selected':''}>${c}</option>`).join('');document.getElementById('editItemModal').style.display='flex';}
+function saveItemEdit(){const i=inv.find(x=>x.id===editItemId);if(!i)return;i.name=document.getElementById('ei-name').value.trim()||i.name;i.cat=document.getElementById('ei-cat').value;i.scope=document.getElementById('ei-scope').value;i.qty=parseInt(document.getElementById('ei-qty').value)||0;i.container=document.getElementById('ei-container').value;i.notes=document.getElementById('ei-notes').value;i.lastBy=CU;i.lastDate=new Date().toISOString().slice(0,10);closeModal('editItemModal');syncInventory();renderInv();showToast('Updated');}
+function oAI(cat){addItemCat=cat;document.getElementById('addItemCatLbl').textContent=cat;['ai2-name','ai2-container','ai2-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('ai2-qty').value=1;document.getElementById('ai2-loc').value='storage';document.getElementById('ai2-scope').value='cds';document.getElementById('addItemModal').style.display='flex';setTimeout(()=>document.getElementById('ai2-name').focus(),80);}
+function saveNewItem(){const n=document.getElementById('ai2-name').value.trim();if(!n){showToast('Name required');return;}const nid=inv.length?Math.max(...inv.map(i=>i.id))+1:1;inv.push({id:nid,name:n,cat:addItemCat,scope:document.getElementById('ai2-scope').value,qty:parseInt(document.getElementById('ai2-qty').value)||1,location:document.getElementById('ai2-loc').value,container:document.getElementById('ai2-container').value,notes:document.getElementById('ai2-notes').value,lastBy:CU,lastDate:new Date().toISOString().slice(0,10)});closeModal('addItemModal');syncInventory();renderInv();showToast(`"${n}" added`);}
+function tgIM(e,id){e.stopPropagation();const m=document.getElementById('im_'+id);const o=m.style.display==='block';cIM();if(!o)m.style.display='block';}
+function cIM(){document.querySelectorAll('.opts-menu').forEach(m=>m.style.display='none');}
+document.addEventListener('click',cIM);
+
+function initAI(){
+  if(aiInited)return;aiInited=true;
+  aiMsgs=[{role:'assistant',content:`Hi${CU?' '+CU.split(':')[0].trim():''}! I'm your Matrix Dancesport 2026 assistant. I have full context on ${EVS[CE].name}, your OKC venue, P&L, workshop lineup, and staff logistics. What would you like to work on?`}];
+  renderAI();
+  document.getElementById('aiChips').innerHTML=['Analyze P&L margins','Matrix registration strategy','Workshop pricing analysis','OKC market benchmarks','Financial risk analysis'].map(c=>`<div class="chip" onclick="aiQ('${c}')">${c}</div>`).join('');
+}
+function renderAI(){const el=document.getElementById('aiMsgs');if(!el)return;el.innerHTML=aiMsgs.map(m=>`<div class="ai-msg ${m.role==='user'?'usr':''}"><div class="ai-av ${m.role==='user'?'usr':'bot'}">${m.role==='user'?(CU||'You').slice(0,2).toUpperCase():'AI'}</div><div class="ai-bub ${m.role==='user'?'usr':'bot'}">${m.content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div></div>`).join('');el.scrollTop=el.scrollHeight;}
+function aiKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();aiSend();}}
+function aiQ(t){document.getElementById('aiInput').value=t;aiSend();}
+async function aiSend(){const inp=document.getElementById('aiInput');const text=inp.value.trim();if(!text||aiLoading)return;inp.value='';aiLoading=true;document.getElementById('aiSendBtn').disabled=true;aiMsgs.push({role:'user',content:text});aiMsgs.push({role:'assistant',content:'Thinking...'});renderAI();const ctx=`\n[Event: ${EVS[CE].name}. P&L: Rev ${fmt(cRev(CE))}, Exp ${fmt(cExp(CE))}, Net ${fmt(cRev(CE)-cExp(CE))}.]`;const msgs=aiMsgs.filter((m,i)=>i<aiMsgs.length-1).map(m=>({role:m.role,content:m.content}));msgs.push({role:'user',content:text+ctx});try{const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:AI_SYS,messages:msgs})});const d=await r.json();aiMsgs[aiMsgs.length-1]={role:'assistant',content:d.content?.[0]?.text||'Error — please try again'};}catch(e){aiMsgs[aiMsgs.length-1]={role:'assistant',content:'Connection error. Please try again.'};}aiLoading=false;document.getElementById('aiSendBtn').disabled=false;renderAI();}
+async function aiExport(){const what=document.getElementById('aiExpWhat').value;let content='';const hdr=`Matrix Dancesport 2026 Export\n${new Date().toLocaleString()}\n${'─'.repeat(40)}\n\n`;if(what==='full')content=hdr+aiMsgs.map(m=>`[${m.role==='user'?'You':'AI'}]\n${m.content}`).join('\n\n');else if(what==='ai')content=hdr+aiMsgs.filter(m=>m.role==='assistant').map(m=>m.content).join('\n\n');else if(what==='last'){const l=[...aiMsgs].reverse().find(m=>m.role==='assistant');content=hdr+(l?l.content:'');}else{showToast('Generating summary...');try{const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:AI_SYS,messages:[...aiMsgs.map(m=>({role:m.role,content:m.content})),{role:'user',content:'Provide an executive summary with key insights and action items.'}]})});const d=await r.json();content=hdr+(d.content?.[0]?.text||'');}catch(e){content=hdr+'Could not generate summary.';}}navigator.clipboard.writeText(content).catch(()=>{});showToast('Copied to clipboard');}
+
+function setSS(s){document.getElementById('syncTxt').textContent=s;}
+const _sh=(action,data)=>fetch('/api/sheets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...data})});
+
+async function syncRow(item,from,to,ts){
+  setSS('Syncing...');
+  try{await _sh('appendInventoryLog',{item,from:LOC[from]||from,to:LOC[to]||to,who:CU,ts});setSS('Synced');}
+  catch(e){setSS('Sheets');}
+  setTimeout(()=>setSS('Sheets'),3000);
+}
+async function syncInventory(){
+  setSS('Syncing...');
+  try{await _sh('writeInventory',{inventory:inv});setSS('Synced');}
+  catch(e){setSS('Sheets');}
+  setTimeout(()=>setSS('Sheets'),3000);
+}
+let _actTimer=null;
+async function syncActuals(){
+  clearTimeout(_actTimer);
+  _actTimer=setTimeout(async()=>{
+    try{await _sh('writePLActuals',{actuals:plAct.matrix,who:CU});}
+    catch(e){}
+  },1500);
+}
+async function syncPLPlan(){
+  try{await _sh('writePLPlan',{pl:PL.matrix});}
+  catch(e){}
+}
+async function loadFromSheets(){
+  setSS('Loading...');
+  try{
+    const r=await _sh('readAll',{});
+    const d=await r.json();
+    if(d.inventory&&d.inventory.length)inv=d.inventory;
+    if(d.plPlan){
+      if(d.plPlan.rev&&Object.keys(d.plPlan.rev).length)Object.assign(PL.matrix.rev,d.plPlan.rev);
+      if(d.plPlan.exp&&Object.keys(d.plPlan.exp).length)Object.assign(PL.matrix.exp,d.plPlan.exp);
+    }
+    if(d.plActuals)plAct.matrix=d.plActuals;
+    setSS('Synced');
+  }catch(e){setSS('Offline');}
+  setTimeout(()=>setSS('Sheets'),2000);
+}
+
+function closeModal(id){document.getElementById(id).style.display='none';}
+function maybeClose(e,id){if(e.target===document.getElementById(id))closeModal(id);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+(async()=>{await loadFromSheets();renderDash();})();
+</script>
+</body>
+</html>
